@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "camlink-renamer"
+version = "0.1.0"
+description = "Python script to rename Camlink 4K devices in registry"
+authors = ["John Leonard <john@lowkeylabs.com>"]
+license = "GPL-3.0-or-later"
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+click = "^8.1.6"
+loguru = "^0.7.0"
+
+[tool.poetry.scripts]
+camlink-renamer = "src:_main.cli"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

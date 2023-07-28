@@ -4,7 +4,7 @@ import sys
 import winreg
 import click
 from loguru import logger
-from .utils import rename_device_driver, get_camlink_devices
+from .utils import rename_device_driver, print_camlink_devices, rename_camlink_device
 
 logger.remove()
 logger.add(sys.stderr, level="SUCCESS")
@@ -27,20 +27,20 @@ def list(ctx,all,verbose):
     print("list")
 #    device_instance_path_to_search = "USB#VID_0FD9&PID_0066&MI_00#8&2764D13E&0&0000"
 
-    camlink_list = get_camlink_devices()
-    i = 0
-    for camlink in camlink_list.keys():
-        print( f"{i:2} : {camlink_list[camlink]['device_id']:8} : {camlink_list[camlink]['friendly_name']}" )
-        i = i + 1
+    print_camlink_devices()
 
 @cli.command()
 @click.pass_context
-@click.option("--sid",help="The list-ID of CamLink from previous list command")
-@click.option("--name", help="The friendly name to associate with this CamLink")
-def rename(ctx,sid,name):
+@click.option("--id",help="List ID (0,1,2,...) from list command",prompt=True,type=int)
+@click.option("--name",help="Name to associate with this device",prompt=True)
+def rename(ctx,id,name):
     """ Renames CamLink device using reference id
     """
-    print("rename")
+    print(f"Renaming device {id} to {name}")
+    rename_camlink_device( id, name )
+
+#    print_camlink_devices()
+
 #    device_instance_path_to_search = "USB#VID_0FD9&PID_0066&MI_00#8&2764D13E&0&0000"
 #    keylist = search_registry_for_device_instance(device_instance_path_to_search)
 #    rename_device_instance("Cam Link 4K-Canon R10",keylist)

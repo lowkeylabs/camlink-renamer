@@ -120,3 +120,31 @@ def get_camlink_devices():
 #    rename_device_driver( device_instance_path_to_search )
 
     return keylist1
+
+
+def print_camlink_devices():
+    """ Print list of all camlink devices """
+    camlink_list = get_camlink_devices()
+    i = 0
+    for camlink in camlink_list.keys():
+        print( f"{i:2} : {camlink_list[camlink]['device_id']:8} : {camlink_list[camlink]['friendly_name']}" )
+        i = i + 1
+
+def rename_camlink_device( id, new_name ):
+    """ Rename a camlink device using a list ID from the print_camlink_devices list """
+    camlink_list = get_camlink_devices()
+    device_id = list(camlink_list.keys())[id]
+    try:
+        for item in camlink_list[device_id]["searchkey_paths"]:
+            subkey_path = item["searchkey_path"]
+            subkey = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, subkey_path, 0, winreg.KEY_SET_VALUE)
+            winreg.SetValueEx(subkey, "FriendlyName", 0, winreg.REG_SZ, new_name)
+            winreg.CloseKey(subkey)
+            print(f"Key value 'FriendlyName' has been updated to '{new_name}' in: {subkey_path}")
+    except FileNotFoundError:
+        print("Registry key not found.")
+    except PermissionError as e:
+        print("Permission error. This command must be run from an elevated account.")
+        print(f"Error details: {e}")
+    except Exception as e:
+        print(f"An error occurred: {e}")

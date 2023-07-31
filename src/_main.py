@@ -3,6 +3,7 @@
 import sys
 import winreg
 import click
+import usb.core
 from loguru import logger
 from .utils import rename_device_driver, print_camlink_devices, rename_camlink_device
 
@@ -45,6 +46,23 @@ def rename(ctx,id,name):
 #    keylist = search_registry_for_device_instance(device_instance_path_to_search)
 #    rename_device_instance("Cam Link 4K-Canon R10",keylist)
 #    rename_device_driver( device_instance_path_to_search )
+
+
+@cli.command()
+@click.pass_context
+def test(ctx):
+
+    import usb.core
+    import usb.backend.libusb1
+    backend = usb.backend.libusb1.get_backend(find_library=lambda x: "./libusb-1.0.dll")
+    dev = usb.core.find(find_all=True, backend=backend)
+
+#    dev = usb.core.find()
+    i = 0
+    for d in dev:
+        print(f"{i:2}-> {d.idVendor:04X} : {d.idProduct:04X} : {d.bDeviceClass:2X} : {d.bDeviceSubClass:2X}")
+        i = i + 1
+    pass
 
 if __name__ == '__main__':
     cli()
